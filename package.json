@@ -1,0 +1,23 @@
+{
+  "name": "numero",
+  "version": "1.0.0",
+  "description": "practice mental maths",
+  "main": "mathletic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vanasnip/numero.git"
+  },
+  "author": "ivano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vanasnip/numero/issues"
+  },
+  "homepage": "https://github.com/vanasnip/numero#readme",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "prompt": "^1.0.0"
+  }
+}
