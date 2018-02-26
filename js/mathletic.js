@@ -29,6 +29,7 @@ Sudo code for mathletic
 */
 
 function promptUser(question, answer){
+    let x = 0;
     let schema = {
         properties:{
             userAns:{
@@ -40,34 +41,12 @@ function promptUser(question, answer){
     prompt.get(schema, function(err, result){
         if (parseInt(result.userAns) === answer){
             console.log(result.userAns, 'is correct');
+
         } else {
             console.log(result.userAns, 'is incorrect, try again');
             promptUser(question, answer);
         }
-        
-    });
-}
-
-function getPromptAsync(question, answer) {
-    return new Bluebird(function(resolve, reject) {
-        let schema = {
-            properties:{
-                userAns:{
-                    message: question + '?'
-                }
-            }
-        }
-        
-        prompt.get(schema, function(err, result){
-            if (parseInt(result.userAns) === answer){
-                console.log(result.userAns, 'is correct');
-                resolve();
-            } else {
-                console.log(result.userAns, 'is incorrect, try again');
-                reject();
-            }
-            
-        });
+        x = 1;
     });
 }
 
@@ -130,33 +109,27 @@ function askQuestion(qLimits, aLimits, noOfQues){
         askQuestion(qLimits, aLimits, noOfQues);
     }
 }
-
+let count = 0;
 async function mathesize(cart){
+    
     let ask;
     const {level, phase, qr, ar, stream, nickname} = cart;
-    
-    await prompt.start();
-    
-    let hasRightAnswer = false;
-    while(!hasRightAnswer) {
-        ask = askQuestion(qr, ar, 2);
-        
-        try {
-            console.log('BEFORE PROMISE')
-           await promptUserAsync(ask.question, ask.answer);
-            console.log('AFTER PROMISE')
-           hasRightAnswer = true;
-        } catch(err) {
-            console.log('IN CATCHER')
-            hasRightAnswer = false;
+
+       
+    prompt.start();
+    ask = askQuestion(qr, ar, 2);
+    promptUser(ask.question, ask.answer);
+    count++;
+
+
+        if (count < 10){
+            mathesize(cart);
         }
-    }
-        
-    await prompt.end();    
-  
 }
 
 mathesize(lvl_01_phase_01);
+
+
 
 
 
