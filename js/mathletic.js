@@ -1,6 +1,4 @@
 
-var prompt = require('prompt');
-const Bluebird = require('bluebird');
 /*
 Sudo code for mathletic
     levels - 1000 questions each || answer 15 in a row with a set time
@@ -27,9 +25,10 @@ Sudo code for mathletic
         **note -- adding multple numbers pyramid 2 + 4 + 6 + 8 + 19 = 39
                                                    6  >> 12 >> 20 >>> 39    
 */
+let count = 0;
+const numOfQuestions = 2;
 
 function promptUser(question, answer){
-    let x = 0;
     let schema = {
         properties:{
             userAns:{
@@ -37,17 +36,20 @@ function promptUser(question, answer){
             }
         }
     }
-    
-    prompt.get(schema, function(err, result){
-        if (parseInt(result.userAns) === answer){
-            console.log(result.userAns, 'is correct');
+    let response = prompt(question);
+    if (parseInt(response) === answer){
+        
+        count++;
+        console.log('%c :::::::::::::::::::: '+ question +' = '+response+' ::::::::::::::::::::', 'background: #008000; color: #ffffff');
 
-        } else {
-            console.log(result.userAns, 'is incorrect, try again');
-            promptUser(question, answer);
-        }
-        x = 1;
-    });
+    } else {
+
+        console.log('%c XXXXXXXXXXXXXXXXXXX '+ question +' != '+response+' XXXXXXXXXXXXXXXXXXXXX', 'background: #FF0000; color: #ffffff');
+        console.log(response, 'is incorrect, try again');
+        promptUser(question, answer);
+    }
+
+    return count < numOfQuestions;
 }
 
 function makeQuestionString(qArr){
@@ -109,25 +111,39 @@ function askQuestion(qLimits, aLimits, noOfQues){
         askQuestion(qLimits, aLimits, noOfQues);
     }
 }
-let count = 0;
-async function mathesize(cart){
+
+function mathesize(cart){
     
     let ask;
     const {level, phase, qr, ar, stream, nickname} = cart;
 
        
-    prompt.start();
+
     ask = askQuestion(qr, ar, 2);
-    promptUser(ask.question, ask.answer);
-    count++;
-
-
-        if (count < 10){
+    let myVar  = promptUser(ask.question, ask.answer);
+       
+        if (myVar){
             mathesize(cart);
         }
+    
 }
 
-mathesize(lvl_01_phase_01);
+
+function run(){
+    clear();
+    let start = new Date().getTime();
+    mathesize(lvl_01_phase_01);
+    let end = new Date().getTime();
+    
+    let finale = moment.duration(end - start).seconds();
+
+    console.log('it took you '+ finale+ ' sec');
+
+    count = 0;
+}
+
+
+
 
 
 
