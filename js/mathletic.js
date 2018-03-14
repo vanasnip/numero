@@ -1,6 +1,6 @@
 
 var prompt = require('prompt');
-const Bluebird = require('bluebird');
+
 /*
 Sudo code for mathletic
     levels - 1000 questions each || answer 15 in a row with a set time
@@ -28,27 +28,7 @@ Sudo code for mathletic
                                                    6  >> 12 >> 20 >>> 39    
 */
 
-function promptUser(question, answer){
-    let x = 0;
-    let schema = {
-        properties:{
-            userAns:{
-                message: question + '?'
-            }
-        }
-    }
-    
-    prompt.get(schema, function(err, result){
-        if (parseInt(result.userAns) === answer){
-            console.log(result.userAns, 'is correct');
 
-        } else {
-            console.log(result.userAns, 'is incorrect, try again');
-            promptUser(question, answer);
-        }
-        x = 1;
-    });
-}
 
 function makeQuestionString(qArr){
     let qString = '';
@@ -59,7 +39,7 @@ function makeQuestionString(qArr){
             qString= qString + " + ";
         }
     }
-    return qString;
+    return qString+' = ';
 }
 function CartridgeMaker(level, phase, qr, ar, stream, nickname){
     return {
@@ -109,25 +89,49 @@ function askQuestion(qLimits, aLimits, noOfQues){
         askQuestion(qLimits, aLimits, noOfQues);
     }
 }
-let count = 0;
-async function mathesize(cart){
-    
-    let ask;
+
+
+
+function mathesize(cart, numQuestions){
+    let count = 0; 
+    let initQ = 0;
+
     const {level, phase, qr, ar, stream, nickname} = cart;
+    let ask = askQuestion(qr, ar, 2);
 
-       
-    prompt.start();
-    ask = askQuestion(qr, ar, 2);
-    promptUser(ask.question, ask.answer);
-    count++;
+    process.stdin.on('readable', () => {
 
-
-        if (count < 10){
-            mathesize(cart);
+        if ( initQ === 0){
+            process.stdout.write(`${ask.question} `); //initial question
+            initQ++;
         }
+        const answer = process.stdin.read();
+        if (answer !== null) {
+            let cleanAns = parseInt(answer.toString().slice(0, -1));
+            if(cleanAns === ask.answer){
+                count++;
+                process.stdout.write(`${cleanAns} is correct!\n\n`);
+                ask = askQuestion(qr, ar, numQuestions); // define new question
+                process.stdout.write(`${ask.question} `);
+                console.log('count ',count);
+                if ( count === numQuestions) {
+                    process.exit();
+                }
+                
+            } else {
+                process.stdout.write(`${cleanAns} is wrong! try again\n`);
+                process.stdout.write(`${ask.question} `);
+            }
+            
+        }
+    });
+    
+    process.stdin.on('exit', () => {
+        process.stdout.write('end\n');
+    });
 }
 
-mathesize(lvl_01_phase_01);
+mathesize(lvl_01_phase_01, 2);
 
 
 
